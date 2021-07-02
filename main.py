@@ -19,20 +19,6 @@ resource_fields = {
     'date': fields.String,
 }
 
-#Class to for the event/id endpoint
-class EventByID(Resource):
-    @marshal_with(resource_fields)
-    def get(self, event_id):
-        event = Event.query.filter(Event.id == event_id).first()
-        if event is None:
-            abort(404, "The event doesn't exist!")
-        for i in db.session.query(Event.id, Event.event, Event.date).filter(Event.id == event_id).all():
-            date_time = datetime.datetime.strptime(dict(i)['date'], '%Y-%m-%d %H:%M:%S')
-            dict_results = dict(i)
-            dict_results.update({'date': date_time.strftime('%Y-%m-%d')})
-
-        return dict_results
-
     @staticmethod
     def delete(event_id):
         event = Event.query.filter(Event.id == event_id).first()
@@ -105,20 +91,6 @@ class Eventlist(Resource):
 
 #        return {'id': event.id, 'event': event.event, 'date': event.date}
 
-#Class to for the event/today endpoint
-
-class EventToday(Resource):
-    @marshal_with(resource_fields)
-    def get(self):
-        empty_array = []
-        for i in db.session.query(Event.id, Event.event, Event.date).filter(
-                Event.date == date.today().strftime('%Y-%m-%d %H:%M:%S')).all():
-            date_time = datetime.datetime.strptime(dict(i)['date'], '%Y-%m-%d %H:%M:%S')
-            my_dict = dict(i)
-            my_dict.update({'date': date_time.strftime('%Y-%m-%d')})
-            print(my_dict['date'])
-            empty_array.append(my_dict)
-        return empty_array
 
 
 # checking if the date format is valid
